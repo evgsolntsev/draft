@@ -1,0 +1,10 @@
+.env
+.venv
+.pytest_cache
+.tox
+*__pycache__*
+.eggs
+build
+*.egg-info
+AUTHORS
+ChangeLog

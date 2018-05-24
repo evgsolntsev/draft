@@ -1,4 +1,10 @@
+import random
+
 import numpy as np
+
+
+START_CHARACTER = "^"
+END_CHARACTER = "$"
 
 
 class Vertex(dict):
@@ -26,8 +32,9 @@ class Vertex(dict):
     def get_edge(self):
         """Returns next word using weighted random."""
 
-        return np.random.choice(
-            self.keys(), p=[v / self.weight_sum for v in self.values()])
+        choices = list(self.keys())
+        weights = [v / self.weight_sum for v in self.values()]
+        return choices[np.random.choice(list(range(len(choices))), p=weights)]
 
 
 class Model(dict):
@@ -41,8 +48,19 @@ class Model(dict):
         :param list data:
         """
 
-        for i in range(len(data) - self.order - 1):
-            window = data[i:i + self.order]
+        data = [START_CHARACTER] + data.copy() + [END_CHARACTER]
+        for i in range(len(data) - self.order):
+            window = tuple(data[i:i + self.order])
             if window not in self:
                 self[window] = Vertex()
-            self[window].update(data[i + 1:i + self.order + 1])
+            self[window].update(tuple(data[i + 1:i + self.order + 1]))
+
+    def generate_sentence(self):
+        k = random.choice([
+            key for key in self.keys() if key[0] == START_CHARACTER])
+
+        result = []
+        while k[-1] != END_CHARACTER:
+            result.append(k[0])
+            k = self[k].get_edge()
+        return result + list(k)
