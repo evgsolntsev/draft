@@ -63,4 +63,4 @@ class Model(dict):
         while k[-1] != END_CHARACTER:
             result.append(k[0])
             k = self[k].get_edge()
-        return result + list(k)
+        return " ".join((result + list(k))[1:-1])
